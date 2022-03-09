@@ -53,43 +53,28 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 
 int		main(void)
 {
-	const int size = 5;
-	ft::vector<int> vct(size);
-	ft::vector<int>::iterator it(vct.begin());
-	ft::vector<int>::const_iterator ite(vct.end());
+	ft::vector<std::string> vct(8);
+	ft::vector<std::string> vct2;
+	ft::vector<std::string>::iterator it = vct.begin();
 
-	for (int i = 1; it != ite; ++i)
-		*it++ = i;
-	printSize(vct, 1);
+	for (unsigned long int i = 0; i < vct.size(); ++i)
+		it[i] = std::string((vct.size() - i), i + 65);
+	printSize(vct, true);
 
-	it = vct.begin();
-	ite = vct.begin();
+	std::cout << "push_back():\n" << std::endl;
 
-	std::cout << *(++ite) << std::endl;
-	std::cout << *(ite++) << std::endl;
-	std::cout << *ite++ << std::endl;
-	std::cout << *++ite << std::endl;
+	vct.push_back("One long string");
+	// vct2.push_back("Another long string");
 
-	it->m();
-	ite->m();
+	// printSize(vct);
+	// printSize(vct2);
 
-	std::cout << *(++it) << std::endl;
-	std::cout << *(it++) << std::endl;
-	std::cout << *it++ << std::endl;
-	std::cout << *++it << std::endl;
+	// vct.pop_back();
+	// vct2.pop_back();
+	// std::cout << "UGHWUHGUHGUHSGUHUGHSUHG" << std::endl;
 
-	std::cout << *(--ite) << std::endl;
-	std::cout << *(ite--) << std::endl;
-	std::cout << *--ite << std::endl;
-	std::cout << *ite-- << std::endl;
-
-	(*it).m();
-	(*ite).m();
-
-	std::cout << *(--it) << std::endl;
-	std::cout << *(it--) << std::endl;
-	std::cout << *it-- << std::endl;
-	std::cout << *--it << std::endl;
+	// printSize(vct);
+	// printSize(vct2);
 
 	return (0);
 }

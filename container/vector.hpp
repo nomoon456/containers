@@ -210,7 +210,6 @@ public:
         if (empty())
             return ;
         erase(begin(),end());
-        // delete _array;
     }
 
     iterator insert(iterator pos, const T &value)
@@ -276,7 +275,10 @@ public:
     }
 
     void pop_back() {
-        erase(end());}
+        resize(this->size() - 1);
+    }
+    // void pop_back() {
+    //     erase(end() - 1);}
     // template <class InputIterator>
     // void insert (iterator pos, InputIterator first, InputIterator last,
     //     typename ft::enable_if<ft::is_iterator<InputIterator>::value, InputIterator>::type* = 0){
@@ -284,9 +286,46 @@ public:
     //         insert(pos++, *first);
     // }
 
-    void push_back (const value_type& val) {
+    // void push_back (const value_type& val)
+	// {                
+	// 	if (_end == _end_capacity)
+	// 	{
+	// 		int next_capacity = (this->size() > 0) ? (int)(this->size() * 2) : 1;
+	// 		this->reserve(next_capacity);
+	// 	}
+	// 	_alloc.construct(_end, val);
+	// 	_end++;
+	// }
+
+    // if (_allocSize < _size + count) {
+	// 		if (_allocSize * 2 < _size + count) {
+	// 			reserve(_size + count);}
+    //         else {
+	// 			reserve(_allocSize * 2 + !_allocSize);}
+    //     }
+
+    // void push_back (const value_type &val) {
+    //     if (_size == _allocSize)
+    //         this->reserve(_allocSize * 2 + !_allocSize);
+    //     _alloc.construct(end(), val);
+    // }
+
+    void push_back(const value_type &val) {
         insert(end(), val);
     }
+
+    // void push_back (const value_type& value) {
+    //     if (new_cap > max_size())
+	// 		throw std::length_error("vector::reserve");
+    //     size_t y = -1;
+
+    //     if (_allocSize < _size + 1) {
+    //         T *newArr = _alloc.allocate(_size + 1);
+    //         while (++y <= _size)
+    //         _alloc.allocate(_size + 1);
+
+    //     _alloc.construct(_array + _size, value);
+    // }
 
     void resize (size_type n, T val = value_type()) {
         if (n > size())
