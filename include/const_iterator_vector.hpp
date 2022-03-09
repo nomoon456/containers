@@ -24,40 +24,27 @@ namespace ft {
 
 	    const_iterator_vector(void) : iterator<T>(){};
 	    const_iterator_vector(pointer ptr) {this->_ptr = ptr; };
-	    ~const_iterator_vector(void) {};
-		// const_iterator_vector(iterator_vector<T> &src) {this->_ptr = src.operator->();};
-		const_iterator_vector(const iterator<T>  &src) :iterator<T>(src) {} ;
-	    // const_iterator_vector(_it const &p) { *this = p; } ;
-    
-	    // const _it &operator=(_it const &p) { _ptr = p._ptr; return (*this); };
+	    ~const_iterator_vector() {};
+		const_iterator_vector(const iterator<T> &src) : iterator<T>(src) {};
 
-	    // bool operator==(_it const& p) const {return(this->_ptr == p._ptr);};
-	    // bool operator!=(_it const& p) const {return(this->_ptr != p._ptr);};
-	    // bool operator>(_it const& p) const {return(this->_ptr > p._ptr);};
-	    // bool operator<(_it const& p) const {return(this->_ptr < p._ptr);};
-	    // bool operator>=(_it const& p) const {return(this->_ptr >= p._ptr);};
-	    // bool operator<=(_it const& p) const {return(this->_ptr <= p._ptr);};
+	    const _it operator+(difference_type p) {return(_it(this->_ptr + p));}; // _ptr + p
+	    const _it operator-(difference_type p) {return(_it(this->_ptr - p));}; // _ptr - p
 
-	    // const _it operator+(difference_type p) {return(_it(this->_ptr + p));}; // _ptr + p
-	    // const _it operator-(difference_type p) {return(_it(this->_ptr - p));}; // _ptr - p
+	    difference_type operator+(_it p) const {return(this->_ptr + p._ptr);}; // _ptr + p
+	    difference_type operator-(_it p) const {return(this->_ptr - p._ptr);}; // _ptr - p
 
-	    // difference_type operator+(_it p) {return(this->_ptr + p._ptr);}; // _ptr + p
-	    // difference_type operator-(_it p) {return(this->_ptr - p._ptr);}; // _ptr - p
+	    const _it operator++() { ++this->_ptr; return(*this);}; // ++_ptr
+		const _it operator++(int) {_it tmp(*this); ++this->_ptr; return(tmp);}; // _ptr++
+		const _it operator--() { --this->_ptr; return(*this);}; // --_ptr
+		const _it operator--(int) {_it tmp(*this); --this->_ptr; return(tmp);}; // _ptr--
 
-	    // const _it operator++() { this->_ptr++; return(*this);}; // ++_ptr
-	    // const _it operator++(int) { this->_ptr++; return(_it(this->_ptr + 1));}; // _ptr++
-	    // const _it operator--() { this->_ptr--; return(*this);}; // --_ptr
-	    // const _it operator--(int) { this->_ptr--; return(_it(this->_ptr - 1));}; // _ptr--
+	    _it operator+=(difference_type p) {this->_ptr += p; return(*this);}; // _ptr += p
+	    _it operator-=(difference_type p) {this->_ptr -= p; return(*this);}; // _ptr -= p
 
-	    // _it operator+=(difference_type p) {this->_ptr += p; return(*this);}; // _ptr += p
-	    // _it operator-=(difference_type p) {this->_ptr -= p; return(*this);}; // _ptr -= p
-
-	    // pointer operator->() {return(this->_ptr);}; // _ptr->p
-	    // pointer operator->() const {return (this->_ptr);};	
-        // const_reference operator*() const {return (*this->_ptr);}; // *_ptr
-	    // const_reference operator[](difference_type p) const {return (*(this->_ptr + p));}; // _ptr[]
-    // private:
-	// 	pointer _ptr;
+	    const_pointer operator->() {return(this->_ptr);}; // _ptr->p
+	    const_pointer operator->() const {return (this->_ptr);};	
+        const_reference operator*() const {return (*this->_ptr);}; // *_ptr
+	    const_reference operator[](difference_type p) const {return (*(this->_ptr + p));}; // _ptr[]
     }; //end of iterator_vector definition class
 }//end of namespace ft
 

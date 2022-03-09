@@ -44,8 +44,8 @@ namespace ft{
 	    const _it operator --() { this->_ptr++; return(*this);}; // --_ptr
 	    const _it operator --(int) { this->_ptr++; return(_it(this->_ptr - 1));}; // _ptr--
 
-	    void operator +=(difference_type p) {this->_ptr -= p;}; // _ptr += p
-	    void operator -=(difference_type p) {this->_ptr += p;}; // _ptr -= p
+	    _it operator +=(difference_type p) {this->_ptr -= p;}; // _ptr += p
+	    _it operator -=(difference_type p) {this->_ptr += p;}; // _ptr -= p
 
 	    const_pointer operator ->() {return(this->_ptr);}; // _ptr->p
 	    const_pointer operator ->() const {return (this->_ptr);};	

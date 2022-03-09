@@ -25,36 +25,71 @@ struct Buffer
 	char buff[BUFFER_SIZE];
 };
 
+template <typename T>
+void	printSize(ft::vector<T> const &vct, bool print_content = true)
+{
+	const size_t size = vct.size();
+	const size_t capacity = vct.capacity();
+	const std::string isCapacityOk = (capacity >= size) ? "OK" : "KO";
+	// Cannot limit capacity's max value because it's implementation dependent
+
+	std::cout << "size: " << size << std::endl;
+	std::cout << "capacity: " << isCapacityOk << std::endl;
+	std::cout << "max_size: " << vct.max_size() << std::endl;
+	if (print_content)
+	{
+		typename ft::vector<T>::const_iterator it = vct.begin();
+		typename ft::vector<T>::const_iterator ite = vct.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << *it << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
+}
+
 
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
 
-int main() {
-	ft::vector<int> vct(10);
+int		main(void)
+{
+	const int size = 5;
+	ft::vector<int> vct(size);
 	ft::vector<int>::iterator it(vct.begin());
 	ft::vector<int>::const_iterator ite(vct.end());
 
+	for (int i = 1; it != ite; ++i)
+		*it++ = i;
+	printSize(vct, 1);
 
-	std::cout << "==bool comparison=="<< std::endl;
-	if (it != ite)
-   		std::cout << "1)" << std::endl;
-	if (it == ite)
-   		std::cout << "2)" << std::endl;
-	if (it < ite)
-   		std::cout << "3)" << std::endl;
-	if (it > ite)
-    	std::cout << "4)" << std::endl;
-	if (it <= ite)
-  	  std::cout << "5)" << std::endl;
-	if (it >= ite)
-  	  std::cout << "6)" << std::endl;
-	
-	std::cout << "==arithmetic=="<< std::endl;
-	// std::cout << "it + ite: " << it + ite << std::endl; // Invalid in std
-	// std::cout << "it - ite: " << it - ite << std::endl; 
+	it = vct.begin();
+	ite = vct.begin();
 
+	std::cout << *(++ite) << std::endl;
+	std::cout << *(ite++) << std::endl;
+	std::cout << *ite++ << std::endl;
+	std::cout << *++ite << std::endl;
 
+	it->m();
+	ite->m();
 
-  std::cout << "==END==" << std::endl;
-  return 0;
+	std::cout << *(++it) << std::endl;
+	std::cout << *(it++) << std::endl;
+	std::cout << *it++ << std::endl;
+	std::cout << *++it << std::endl;
+
+	std::cout << *(--ite) << std::endl;
+	std::cout << *(ite--) << std::endl;
+	std::cout << *--ite << std::endl;
+	std::cout << *ite-- << std::endl;
+
+	(*it).m();
+	(*ite).m();
+
+	std::cout << *(--it) << std::endl;
+	std::cout << *(it--) << std::endl;
+	std::cout << *it-- << std::endl;
+	std::cout << *--it << std::endl;
+
+	return (0);
 }

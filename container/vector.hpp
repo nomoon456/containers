@@ -167,23 +167,44 @@ public:
         return (_allocSize);
     }
 
-    iterator erase (iterator pos){
-        iterator ret = pos;
-        for(;pos != end();pos++){
-            _alloc.destroy(&(*pos));
-            _alloc.construct(&(*pos), *pos + 1);
-        }
-        _size--;
-        return (ret);
-    }
+
+	iterator erase(iterator pos)
+	{
+		return erase(pos, pos + 1);
+	}
+
+	iterator erase(iterator first, iterator last)
+	{
+		size_t n = last - first;
+		size_t offset = first - _array;
+		allocator_type actr;
+
+		for (size_t i = 0; i < _size - n - offset; i++)
+		{
+			_array[offset + i] = _array[offset + i + n];
+		}
+		_size -= n;
+		return (iterator(_array + offset));
+	}
+
+
+    // iterator erase (iterator pos) {
+    //     iterator ret = pos;
+    //     for(;pos != end();pos++){
+    //         _alloc.destroy(&(*pos));
+    //         _alloc.construct(&(*pos), *pos + 1);
+    //     }
+    //     _size--;
+    //     return (ret);
+    // }
     
-    iterator erase (iterator first, iterator last){
-        iterator ret = first;
-        for(;first != last ; --last){
-            erase(first);
-        }
-        return (ret);
-    }
+    // iterator erase (iterator first, iterator last){
+    //     iterator ret = first;
+    //     for(;first != last ; --last){
+    //         erase(first);
+    //     }
+    //     return (ret);
+    // }
 
     void    clear(){
         if (empty())
