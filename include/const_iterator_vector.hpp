@@ -42,7 +42,7 @@ namespace ft {
 	    _it operator-=(difference_type p) {this->_ptr -= p; return(*this);}; // _ptr -= p
 
 	    const_pointer operator->() {return(this->_ptr);}; // _ptr->p
-	    const_pointer operator->() const {return (this->_ptr);};	
+	    pointer operator->() const {return (this->_ptr);};	
         const_reference operator*() const {return (*this->_ptr);}; // *_ptr
 	    const_reference operator[](difference_type p) const {return (*(this->_ptr + p));}; // _ptr[]
     }; //end of iterator_vector definition class

@@ -64,17 +64,17 @@ int		main(void)
 	std::cout << "push_back():\n" << std::endl;
 
 	vct.push_back("One long string");
-	// vct2.push_back("Another long string");
+	vct2.push_back("Another long string");
 
-	// printSize(vct);
-	// printSize(vct2);
+	printSize(vct);
+	printSize(vct2);
 
-	// vct.pop_back();
-	// vct2.pop_back();
-	// std::cout << "UGHWUHGUHGUHSGUHUGHSUHG" << std::endl;
+	vct.pop_back();
+	vct2.pop_back();
+	std::cout << "UGHWUHGUHGUHSGUHUGHSUHG" << std::endl;
 
-	// printSize(vct);
-	// printSize(vct2);
+	printSize(vct);
+	printSize(vct2);
 
 	return (0);
 }
