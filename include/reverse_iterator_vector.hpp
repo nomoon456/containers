@@ -58,10 +58,28 @@ public:
 	// difference_type		operator-(const reverse_iterator<U> &u) { return u.base().operator-(this->_base); };
 	// reverse_iterator	operator- (difference_type n) const { return reverse_iterator(this->_base.operator+(n)); };
 
-	reverse_iterator_vector	operator+ (difference_type n) const { return reverse_iterator_vector(_base.operator-(n)); };
-	reverse_iterator_vector operator +(const reverse_iterator_vector b) { return (_base - b._base); }; // a + b
-	reverse_iterator_vector operator -(const reverse_iterator_vector b) { return (_base + b._base); }; // a - b
-	reverse_iterator_vector	operator- (difference_type n) const { return reverse_iterator_vector(this->_base.operator+(n)); };
+friend reverse_iterator_vector operator+(difference_type n, const reverse_iterator_vector& it ) {return it.operator+(n);}
+//The incremented iterator, that is reverse_iterator<Iter>(it.base() - n)
+difference_type operator-( const reverse_iterator_vector<value_type>& lhs) {return lhs.base().operator-(this->_base);}
+//rhs.base() - lhs.base()
+reverse_iterator_vector operator+( difference_type n ) const {return reverse_iterator_vector(this->_base.operator-(n));}
+//reverse_iterator(base()-n) or reverse_iterator(base()+n)
+reverse_iterator_vector operator-( difference_type n ) const {return reverse_iterator_vector(this->_base.operator+(n));}
+//reverse_iterator(base()-n) or reverse_iterator(base()+n)
+
+//difference_type operator-(const reverse_iterator<U> &u) { return u.base().operator-(this->_base); };
+//reverse_iterator operator+ (difference_type n) const { return reverse_iterator(this->_base.operator-(n)); };
+//reverse_iterator	operator- (difference_type n) const { return reverse_iterator(this->_base.operator+(n)); };
+
+//friend reverse_iterator	operator+(difference_type n, const reverse_iterator &rhs)
+				//{ return rhs.operator+(n); };
+
+
+
+	// reverse_iterator_vector	operator+ (difference_type n) const { return reverse_iterator_vector(_base.operator-(n)); };
+	// reverse_iterator_vector operator +(const reverse_iterator_vector b) { return (this->_base - b._base); }; // a + b
+	// reverse_iterator_vector operator -(const reverse_iterator_vector b) { return (this->_base + b._base); }; // a - b
+	// reverse_iterator_vector	operator- (difference_type n) const { return reverse_iterator_vector(this->_base.operator+(n)); };
 
 	// INCREMENTERS
 	reverse_iterator_vector operator ++() { _base--; return (*this); };			// ++a
@@ -75,6 +93,8 @@ public:
 
 	//DEREFERENCING & ADDRESS STUFF
 
+	//Reference or pointer to the element previous to current. 
+
 	reference operator *() { return (this->_base); };											// *a
 	const_reference operator *() const { return (*this->_base); };								// *a
 	// reference operator [](difference_type b) { return ((this->_base + b)); };				// a[]
@@ -85,7 +105,8 @@ public:
 
 	static const bool input_iter = true;
 
-	private:
+	protected:
+		iterator super;
 		iterator _base;
 };
 
