@@ -4,7 +4,6 @@
 #include "../include/iterator_vector.hpp"
 #include "../include/const_iterator_vector.hpp"
 #include "../include/reverse_iterator_vector.hpp"
-#include "../include/const_reverse_iterator_vector.hpp"
 #include "../include/iterator.hpp"
 #include "../utils/traits.hpp"
 #include "../utils/algorithm.hpp"
@@ -27,8 +26,8 @@ public:
 
     typedef ft::iterator_vector<T> iterator;
     typedef ft::const_iterator_vector<T> const_iterator;
-    typedef ft::reverse_iterator_vector<T> reverse_iterator;
-    typedef ft::const_reverse_iterator_vector<T> const_reverse_iterator;
+    typedef ft::reverse_iterator_vector<iterator> reverse_iterator;
+    typedef ft::reverse_iterator_vector<const_iterator> const_reverse_iterator;
 
 private:
     T *_array;
