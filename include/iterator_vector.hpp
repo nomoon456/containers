@@ -25,12 +25,12 @@ namespace ft{
         ~iterator_vector(){};
 		iterator_vector(const iterator_vector &src) : iterator<T>(src) {};
 
-		_it operator=(const iterator_vector &rhs) {
-			if (this == &rhs)
-				return (*this);
-			this->_ptr = rhs._ptr;
-			return (*this);
-		}
+		// _it operator=(const iterator_vector &rhs) {
+		// 	if (this == &rhs)
+		// 		return (*this);
+		// 	this->_ptr = rhs._ptr;
+		// 	return (*this);
+		// }
 
 		_it operator +(difference_type p) {return this->_ptr + p;};
 	    _it operator +(difference_type p) const {return(_it(this->_ptr + p));}; // _ptr + p

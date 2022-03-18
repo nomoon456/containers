@@ -123,17 +123,20 @@ public:
     }
 
     reverse_iterator rbegin(){
-        return (_array + (_size - 1));
+        std::cout << "BADDD " << std::endl;
+        return (reverse_iterator(_array + _size));
     }
+
     const_reverse_iterator rbegin() const{
-        return (_array + (_size - 1));
+        std::cout << "GOOOOD " << std::endl;
+        return (const_reverse_iterator(_array + _size));
     }
 
     reverse_iterator rend(){
-        return (_array - 1);
+        return (reverse_iterator(_array));
     }
     const_reverse_iterator rend() const{
-        return (_array - 1);
+        return (const_reverse_iterator(_array));
     }
 
     /*====================

@@ -25,7 +25,10 @@ namespace ft {
 	    const_iterator_vector(void) : iterator<T>(){};
 	    const_iterator_vector(pointer ptr) {this->_ptr = ptr; };
 	    ~const_iterator_vector() {};
+		// const_iterator_vector(const const_iterator_vector &src) : iterator<T>(src) {};
+		// const_iterator_vector(const const_iterator_vector &src) {this->_ptr = src._ptr;};
 		const_iterator_vector(const iterator<T> &src) : iterator<T>(src) {};
+
 
 	    const _it operator+(difference_type p) {return(_it(this->_ptr + p));}; // _ptr + p
 	    const _it operator-(difference_type p) {return(_it(this->_ptr - p));}; // _ptr - p
@@ -41,8 +44,8 @@ namespace ft {
 	    _it operator+=(difference_type p) {this->_ptr += p; return(*this);}; // _ptr += p
 	    _it operator-=(difference_type p) {this->_ptr -= p; return(*this);}; // _ptr -= p
 
-	    const_pointer operator->() {return(this->_ptr);}; // _ptr->p
-	    pointer operator->() const {return (this->_ptr);};	
+	    // pointer operator->() {return(this->_ptr);}; // _ptr->p
+	    const_pointer operator->() const {return (this->_ptr);};	
         const_reference operator*() const {return (*this->_ptr);}; // *_ptr
 	    const_reference operator[](difference_type p) const {return (*(this->_ptr + p));}; // _ptr[]
     }; //end of iterator_vector definition class

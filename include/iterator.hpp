@@ -14,6 +14,7 @@ namespace ft{
 		typedef ft::random_access_iterator_tag iterator_category;
 
         iterator(){};
+		iterator(pointer ptr){this->_ptr = ptr;};
         ~iterator(){};
     
 	_it operator=(const iterator &rhs) {
