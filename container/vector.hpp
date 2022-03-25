@@ -9,6 +9,7 @@
 #include "../utils/algorithm.hpp"
 #include <sstream>
 #include <memory>
+#include <iterator>
 
 namespace ft {
 
@@ -26,8 +27,8 @@ public:
 
     typedef ft::iterator_vector<T> iterator;
     typedef ft::const_iterator_vector<T> const_iterator;
-    typedef ft::reverse_iterator_vector<iterator> reverse_iterator;
-    typedef ft::reverse_iterator_vector<const_iterator> const_reverse_iterator;
+    typedef ft::reverse_iterator<iterator> reverse_iterator;
+    typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 private:
     T *_array;
@@ -82,15 +83,13 @@ public:
     |   DESTRUCTOR   |
     ================*/
         ~vector(){
-            // clear();
-            // _alloc.deallocate(_array, this->capacity());
+            clear();
+            _alloc.deallocate(_array, this->capacity());
         };
 
     /*============
     |   OPERATOR  |
     ===============*/
-
-    /* operator[] */
     reference operator[] (size_type n){
         return (_array[n]);
     }
@@ -103,7 +102,6 @@ public:
         this->insert(this->begin(), x.begin(), x.end());
 		return (*this);
 	}
-
     /*============
     |   ITERATOR  |
     ===============*/   
@@ -122,26 +120,27 @@ public:
         return (_array + _size);
     }
 
-    reverse_iterator rbegin(){
-        std::cout << "BADDD " << std::endl;
-        return (reverse_iterator(_array + _size));
-    }
-
-    const_reverse_iterator rbegin() const{
-        std::cout << "GOOOOD " << std::endl;
-        return (const_reverse_iterator(_array + _size));
-    }
-
-    reverse_iterator rend(){
-        return (reverse_iterator(_array));
-    }
-    const_reverse_iterator rend() const{
-        return (const_reverse_iterator(_array));
-    }
+    reverse_iterator rbegin()
+	{
+		return (reverse_iterator(end()));
+	};
+	const_reverse_iterator rbegin() const
+	{
+		return (const_reverse_iterator(end()));
+	};
+	reverse_iterator rend()
+	{
+		return (reverse_iterator(begin()));
+	};
+	const_reverse_iterator rend() const
+	{
+		return (const_reverse_iterator(begin()));
+	};
 
     /*====================
     |   MEMBER FUNCTION   |
     =====================*/
+    
 	void reserve(size_t new_cap) {
 		if (new_cap > max_size())
 			throw std::length_error("vector::reserve");
@@ -189,25 +188,6 @@ public:
 		return (iterator(_array + offset));
 	}
 
-
-    // iterator erase (iterator pos) {
-    //     iterator ret = pos;
-    //     for(;pos != end();pos++){
-    //         _alloc.destroy(&(*pos));
-    //         _alloc.construct(&(*pos), *pos + 1);
-    //     }
-    //     _size--;
-    //     return (ret);
-    // }
-    
-    // iterator erase (iterator first, iterator last){
-    //     iterator ret = first;
-    //     for(;first != last ; --last){
-    //         erase(first);
-    //     }
-    //     return (ret);
-    // }
-
     void    clear(){
         if (empty())
             return ;
@@ -221,26 +201,19 @@ public:
 		return (begin() + delta);
 	}
 
-    void  insert(iterator pos, size_t count, const T &value) {
-        size_t delta = pos - begin();
-        if (size() == 0)
-            delta = 0;
-		if (_allocSize < _size + count) {
-			if (_allocSize * 2 < _size + count) {
-				reserve(_size + count);}
-            else {
-				reserve(_allocSize * 2 + !_allocSize);}
-        }
-        int on = 0;
-        if (_size == 0)
-            on = 1;
-		pos = begin() + delta;
-        _size += count;
-        if (on == 0) {
-        for (iterator it = end() -1 ; it != pos - count; it--)
-            *(it + count) = *it;}
-        for (iterator it = pos; it != pos + count; it++)
-			*it = value;
+        void  insert(iterator position, size_t n, const T &val) {
+  	difference_type const	idx = position - begin();
+	difference_type const	old_end_idx = end() - begin();
+	iterator				old_end, end;
+
+    resize(_size + n);
+	end = this->end();
+	position = begin() + idx;
+	old_end = begin() + old_end_idx;
+	while (old_end != position)
+		*--end = *--old_end;
+	while (n-- > 0)
+		*position++ = val;
     }
 
 	template <class InputIT>
@@ -277,69 +250,31 @@ public:
     }
 
     void pop_back() {
-        resize(this->size() - 1);
-    }
-    // void pop_back() {
-    //     erase(end() - 1);}
-    // template <class InputIterator>
-    // void insert (iterator pos, InputIterator first, InputIterator last,
-    //     typename ft::enable_if<ft::is_iterator<InputIterator>::value, InputIterator>::type* = 0){
-    //     for(; first != last; first++)
-    //         insert(pos++, *first);
-    // }
-
-    // void push_back (const value_type& val)
-	// {                
-	// 	if (_end == _end_capacity)
-	// 	{
-	// 		int next_capacity = (this->size() > 0) ? (int)(this->size() * 2) : 1;
-	// 		this->reserve(next_capacity);
-	// 	}
-	// 	_alloc.construct(_end, val);
-	// 	_end++;
-	// }
-
-    // if (_allocSize < _size + count) {
-	// 		if (_allocSize * 2 < _size + count) {
-	// 			reserve(_size + count);}
-    //         else {
-	// 			reserve(_allocSize * 2 + !_allocSize);}
-    //     }
-
-    // void push_back (const value_type &val) {
-    //     if (_size == _allocSize)
-    //         this->reserve(_allocSize * 2 + !_allocSize);
-    //     _alloc.construct(end(), val);
-    // }
+        erase(end()- 1);}
 
     void push_back(const value_type &val) {
         insert(end(), val);
     }
 
-    // void push_back (const value_type& value) {
-    //     if (new_cap > max_size())
-	// 		throw std::length_error("vector::reserve");
-    //     size_t y = -1;
 
-    //     if (_allocSize < _size + 1) {
-    //         T *newArr = _alloc.allocate(_size + 1);
-    //         while (++y <= _size)
-    //         _alloc.allocate(_size + 1);
-
-    //     _alloc.construct(_array + _size, value);
-    // }
-
-    void resize (size_type n, T val = value_type()) {
-        if (n > size())
-        {
-            if (_allocSize  < n)
-				this->reserve(n);
-            for (size_t i = _size; i < n; i++)
-                _array[i] = val;
-            _size = n;
-        }
-        else if (n < size())
-            erase(begin() + n, end());
+    void resize (size_type size, T val = value_type()) {
+	    if (size < this->_size)
+	    {
+		    while (size < this->_size)
+			    this->_alloc.destroy(&this->_array[--this->_size]);
+	    }
+	    else
+	    {
+		    size_type const &tmp = this->_size;
+		    if (size <= this->_allocSize)
+			    ;
+		    else if (size <= tmp * 2)
+			    this->reserve(tmp * 2);
+		    else
+			    this->reserve(size);
+		    while (this->_size < size)
+			    this->_alloc.construct(&this->_array[this->_size++], val);
+	    }
     }
 
     template <class InputIterator>
@@ -378,11 +313,6 @@ public:
 			return (_array[pos]);
 	};
 
-    //ADD 
-    //const_reference front() const {
-    //     if (_size != 0)
-    //         return &begin();
-    // }
     reference front() {
         return (*(begin()));
     }
@@ -394,11 +324,10 @@ public:
     reference back() {
         return (*(end() - 1));
     }
-    //ADD const_reference back() const;
+
     const_reference back() const {
         return (*(end() - 1));
     }
-
 
     bool empty() const {
         return (_size == 0 ? true : false);
@@ -471,6 +400,5 @@ void swap (ft::vector<T,Alloc>& x, ft::vector<T,Alloc>& y){
     x = y;
     y = tmp;
 }
-
 
 #endif

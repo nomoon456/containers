@@ -12,12 +12,11 @@ namespace ft{
     class iterator_vector : public iterator<T> {
     public:
         typedef iterator_vector<T> _it;
-        
-		typedef std::ptrdiff_t difference_type; 
+        typedef std::ptrdiff_t difference_type; 
 	    typedef T value_type;
 	    typedef	T*  pointer;
 		typedef const T* const_pointer;
-	  	typedef T& reference;
+	    typedef T& reference;
         typedef const T& const_reference;
 		typedef ft::random_access_iterator_tag iterator_category;
 
@@ -33,9 +32,9 @@ namespace ft{
 	    difference_type operator +(_it p) {return(this->_ptr + p._ptr);}; // _ptr + p
 	    difference_type operator -(_it p) {return(this->_ptr - p._ptr);}; // _ptr - p
 
-	    _it &operator++() { ++this->_ptr; return(*this);}; // ++_ptr
+	    _it operator++() { ++this->_ptr; return(*this);}; // ++_ptr
 		_it operator++(int) {_it tmp(*this); ++this->_ptr; return(tmp);}; // _ptr++
-		_it &operator--() { --this->_ptr; return(*this);}; // --_ptr
+		_it operator--() { --this->_ptr; return(*this);}; // --_ptr
 		_it operator--(int) {_it tmp(*this); --this->_ptr; return(tmp);}; // _ptr--
 
 	    _it operator +=(difference_type p) {this->_ptr += p; return(*this);}; // _ptr += p
@@ -45,7 +44,9 @@ namespace ft{
 	    pointer operator ->() const {return (this->_ptr);};	
 		reference operator *() {return (*this->_ptr);}; // *_ptr
         reference operator *() const {return (*this->_ptr);}; // *_ptr
-	    reference operator [](difference_type p) const {return (this->_ptr[p]);}; // _ptr[]
+	    reference operator [](difference_type p) const {return (*(this->_ptr + p));}; // _ptr[]
+		reference operator [](difference_type p) { return (*(this->_ptr + p)); };	
+
     }; //end of iterator_vector definition class
 	template <class T>
 	iterator_vector<T> operator+(std::ptrdiff_t i, iterator_vector<T> &it) {

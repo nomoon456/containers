@@ -5,7 +5,6 @@ FILE_HPP = container/vector.hpp \
 	include/iterator_vector.hpp \
 	include/const_iterator_vector.hpp \
 	include/reverse_iterator_vector.hpp \
-	include/const_reverse_iterator_vector.hpp \
 	include/iterator.hpp \
 	utils/traits.hpp \
 	utils/algorithm.hpp \
