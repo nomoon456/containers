@@ -17,7 +17,6 @@ public:
 
     AVL():
     _head(NULL), 
-    // _highest_node(NULL),
     _size(0),
     _capacity(0){};
 
@@ -26,6 +25,7 @@ public:
     }
     AVL &operator=(const AVL &ref){
         _head = ref._head;
+        _dummyNode = ref._dummyNode;
         _alloc = ref._alloc;
         _size = ref._size;
         _capacity = ref._capacity;
@@ -35,13 +35,34 @@ public:
     };
 
     void freeAVL(Node<T> *node){
-        if (node != NULL){
+        if (node){
             freeAVL(node->_left);
             freeAVL(node->_right);
             _alloc.destroy(node);
             _alloc.deallocate(node,1);
         }
     }
+	void freeDummyNode(){
+		if (_dummyNode){
+		//detach dummy node from the avl
+		Node<T> *curr;
+        if (_head){
+		    curr = minValNode(_head);
+		    if (curr){
+		    	curr->_left = NULL;
+		    }
+		    curr = maxValNode(_head);
+		    if (curr){
+		    	curr->_right = NULL;
+		    	_dummyNode->_parent = NULL;
+		    }
+        }
+		//free dummy node
+			_alloc.destroy(_dummyNode);
+			_alloc.deallocate(_dummyNode, 1);
+			_dummyNode = NULL;
+		}
+	}
 
     int height(Node<T> *node){
         if (node == NULL)
@@ -63,7 +84,7 @@ public:
         return (height(node->_left) - height(node->_right));
     }
 
-    Node<T> *find(Node<T> *node, ftype first){
+    Node<T> *find(Node<T> *node, ftype first)const {
         if (node == NULL)
             return (NULL);
         if (node->_pair.first == first)
@@ -78,10 +99,6 @@ public:
     Node<T> *newNode(T pair){
         Node<T> *node = _alloc.allocate(1);
         _alloc.construct(node, Node<T>(pair));
-        // if (_highest_node == NULL)
-        //     _highest_node = node;
-        // else if (key_comp(node, _highest_node))
-        //     _highest_node = node;
         return (node);
     }
 
@@ -160,10 +177,10 @@ public:
         return (node);
     }
 
-    Node<T> *minValNode(Node<T> *node){
+    Node<T> *minValNode(Node<T> *node)const{
         Node<T> *curr = node;
 
-        while(curr->_left != NULL)
+        while(curr->_left != NULL && curr->_left != _dummyNode)
             curr = curr->_left;
         return (curr);
     }
@@ -171,39 +188,87 @@ public:
     Node<T> *maxValNode(Node<T> *node){
         Node<T> *curr = node;
 
-        while(curr->_right != NULL)
+        while(curr->_right != NULL && curr->_right != _dummyNode)
             curr = curr->_right;
         return (curr);
     }
 
-    Node<T> *deleteNode(Node<T> *node, T pair){
+    Node<T> *deleteNode(Node<T> *node, ftype first){
         if (node == NULL)
             return (node);
-        if (pair.first < node->_pair.first){
-            node->_left = deleteNode(node->_left, pair);
+        if (first < node->_pair.first){
+            node->_left = deleteNode(node->_left, first);
         }
-        else if (pair.first > node->_pair.first){
-            node->_right = deleteNode(node->_right, pair);
+        else if (first > node->_pair.first){
+            node->_right = deleteNode(node->_right, first);
         }
         else {
-            if (node->_left == NULL || node->_right == NULL){
+                // std::cout << "node parent: " << node->_parent->_pair.first << std::endl;
+                // std::cout << "node parent left: " << node->_parent->_left->_pair.first << std::endl; 
+                // std::cout << "node parent right: " << node->_parent->_right->_pair.first << std::endl; 
+            if (!node->_left || !node->_right){
                 Node<T> *tmp = node->_left ? node->_left : node->_right;
-                if (node->_pair.first == pair.first 
-                    && node->_pair.second != pair.second)
-                    return (node);
-                if (tmp == NULL){
+                /*
+                 0 child  
+                */
+                if (!tmp){
+                // std::cout << "0 child" << std::endl;
                     tmp = node;
                     node = NULL;
                 }
-                else
-                    *node = *tmp;
+                /*
+                 1 child  
+                */
+                else{
+                // std::cout << "1 child" << std::endl;
+                // std::cout << "node parent: " << node->_parent->_pair.first << std::endl;
+                // std::cout << "node parent left: " << node->_parent->_left->_pair.first << std::endl; 
+                // std::cout << "node parent right: " << node->_parent->_right->_pair.first << std::endl; 
+
+                // std::cout << "node: " << node->_pair.first << std::endl;
+                // std::cout << "tmp: " << tmp->_pair.first << std::endl;
+
+
+                    tmp->_parent = node->_parent;
+                    if (node->_parent && node->_parent->_left == node){
+                        // node->_parent->_right = tmp ? tmp : node->_parent->_left = tmp;
+                        tmp->_parent->_left = tmp;
+                    }
+                    else if (node->_parent && node->_parent->_right == node){
+                        tmp->_parent->_right = tmp;
+                    }
+                // std::cout << "node parent: " << node->_parent->_pair.first << std::endl;
+                // std::cout << "node parent left: " << node->_parent->_left->_pair.first << std::endl; 
+                // std::cout << "node parent right: " << node->_parent->_right->_pair.first << std::endl; 
+                    _alloc.destroy(node);
+                    _alloc.deallocate(node,1);
+                    --_size;
+                    return (tmp);
+                    // *node = *tmp;
+                }
+                --_size;
                 _alloc.destroy(tmp);
                 _alloc.deallocate(tmp,1);
             }
+                /*
+                 2 child  
+                */
             else {
-                Node<T> *tmp = maxValNode(node->_left);
-                node->_pair = tmp->_pair;
-                node->_left = deleteNode(node->_left, node->_pair);
+                // std::cout << "2 child" << std::endl;
+                Node<T> *tmp (minValNode(node->_right));
+			    tmp->_parent = node->_parent;
+			    tmp->_left = node->_left;
+			    if (node->_right != NULL && node->_right->_pair.first != tmp->_pair.first){
+			    	node->_right->_left = NULL;
+			    	tmp->_right = node->_right;
+			    }
+			    _alloc.construct(node, *tmp);
+			    if (node->_right != NULL)
+			    	node->_right->_parent = node;
+			    _alloc.destroy(tmp);
+			    _alloc.deallocate(tmp, 1);
+                    --_size;
+                node->_right = deleteNode(node->_right, node->_pair.first);
             }
         }
         if (node == NULL)
@@ -233,11 +298,15 @@ public:
         if (node != NULL){
             std::cout << node->_pair.first << " =";
             std::cout <<" "<< node->_pair.second ;
-            if (node->_parent)
+            if (node->_parent != NULL )
                 std::cout <<" parent: "<< node->_parent->_pair.first;
             else
                 std::cout <<" parent: 0";
             std::cout << std::endl;
+						std::cout << "node: " << node << std::endl;
+						std::cout << "node right: " << node->_right << std::endl;
+						std::cout << "node left " << node->_left << std::endl;
+						std::cout << "-------------------" << std::endl;
             print(node->_left);
             print(node->_right);
         }
@@ -247,7 +316,7 @@ public:
     
 public:
     Node<T> *_head;
-    // Node<T> *_highest_node;
+    Node<T> *_dummyNode;
     A _alloc;
     kc _key_compare;
     size_t _size;
@@ -282,6 +351,7 @@ public:
         _left = ref._left;
         _right = ref._right;
         _height = ref._height;
+				// _pair = ref._pair;
         return (*this);
     }
     ~Node(){};

@@ -40,7 +40,7 @@ template <class InputIterator1, class InputIterator2>
     typename ft::enable_if<ft::is_iterator<InputIterator1>::value, InputIterator1>::type* = 0,
     typename ft::enable_if<ft::is_iterator<InputIterator2>::value, InputIterator2>::type* = 0) {
     
-    while (first1 != last1)
+    while (first1 != last1 && first2 != last2)
     {
         if (*first1 > *first2 || first2 == last2)
             return (false);
@@ -67,6 +67,19 @@ template <class InputIterator1, class InputIterator2, class Compare>
     }
     return (first2 != last2);
 }
+
+/*==========
+|  OTHER    |
+============*/
+template <class InputIT>
+int distance(InputIT first, InputIT last){
+  size_t	i = 0;
+    while (first != last){
+        ++first; ++i;
+    }
+    return (i);
+}
+
 
 }; //end of namepsace
 #endif

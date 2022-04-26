@@ -15,7 +15,8 @@ struct enable_if {
 };
 
 template<class T>
-struct enable_if<true, T> { 
+struct enable_if<true, T> {
+		typedef void void_t;
     typedef T type;};
 
 /*======================

@@ -26,8 +26,10 @@ struct pair{
 	pair (const first_type& a, const second_type& b):first(a), second(b)
 	{};
 
+	template <class U, class V>
 	pair& operator= (const pair& pr){
 		this->first = pr.first;
+		this->second = pr.second;
 		return (*this);
 	}
 
