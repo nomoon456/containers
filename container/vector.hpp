@@ -68,8 +68,6 @@ public:
         _size = 0;
         _allocSize = 0;
         assign(first, last);
-        (void)first;
-        (void)last;
     }
 
     vector (const vector& x) : _alloc(){
@@ -78,7 +76,7 @@ public:
         _allocSize = 0;
         *this = x;
     }
-    
+
     /*================
     |   DESTRUCTOR   |
     ================*/
@@ -352,7 +350,7 @@ public:
     }
 
     }; // end of vector class
-}; //end of ft namespace
+ //end of ft namespace
 
 
 /*======================
@@ -396,9 +394,9 @@ bool operator>= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
 
 template <class T, class Alloc>
 void swap (ft::vector<T,Alloc>& x, ft::vector<T,Alloc>& y){
-    ft::vector<T> tmp = x;
-    x = y;
-    y = tmp;
+    x.swap(y);
 }
+
+};
 
 #endif

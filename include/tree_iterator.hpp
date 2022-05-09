@@ -2,29 +2,27 @@
 #define TREE_ITERATOR_H
 
 #include "../utils/traits.hpp"
-#include "map.hpp"
+#include "../container/map.hpp"
 
 namespace ft{
-    template <class value_type, class kc>
+    template <class T, class value_compare>
     class tree_iterator{
     public:
+        typedef T value_type;
         typedef std::ptrdiff_t difference_type; 
-	    typedef	value_type*  pointer;
-		typedef const value_type* const_pointer;
-	    typedef value_type& reference;
-        typedef const value_type& const_reference;
+	    typedef	T*  pointer;
+		typedef const T* const_pointer;
+	    typedef T& reference;
+        typedef const T& const_reference;
 		typedef ft::bidirectional_iterator_tag iterator_category;
-
-        typedef typename value_type::first_type ftype;
-        typedef typename value_type::second_type stype;
+        
+        typedef typename T::first_type ftype;
+        typedef typename T::second_type stype;
 
 
         tree_iterator(){};
-        // tree_iterator(const tree_iterator &ref){
-        //     _avlIt = ref._avlIt;
-        // };
-       tree_iterator(const tree_iterator &ref):_avlIt(ref._avlIt){
-            // _avlIt = ref._avlIt;
+
+        tree_iterator(const tree_iterator &ref):_avlIt(ref._avlIt){
         };
 
         const tree_iterator &operator=(const tree_iterator &rhs){
@@ -43,27 +41,27 @@ namespace ft{
             return (_avlIt._head != it._avlIt._head);
         };
 
-
         // ++_ptr
         const tree_iterator operator++(){
-            // std::cout << "tree_iterator node: " << _avlIt._head->_pair.first<< std::endl;
-
             if(_avlIt._head->_right){
                 _avlIt._head = _avlIt.minValNode(_avlIt._head->_right);
             }
             else if (_avlIt._head->_parent){
-                Node<value_type> *curr = _avlIt._head;
-                while (curr->_parent != NULL
-                && _avlIt.key_comp(curr, curr->_parent))
+                Node<T> *curr = _avlIt._head;
+                while (curr->_parent
+                && value_compare()(curr->_parent->_pair, curr->_pair))
                     curr = curr->_parent;
-                if (curr->_parent != NULL
-                && _avlIt.key_comp(curr->_parent, _avlIt._head))
+                if (curr->_parent
+                && value_compare()(_avlIt._head->_pair, curr->_parent->_pair)){
                     _avlIt._head = curr->_parent;
-                else
+                }
+                else{
                     _avlIt._head = _avlIt._dummyNode;
+                }
             }
-			else
+			else{
             	_avlIt._head = _avlIt._dummyNode;
+            }
             return (*this);
         }; 
         // _ptr++
@@ -75,23 +73,21 @@ namespace ft{
 			//--_ptr
 	    const tree_iterator operator--(){
             if (_avlIt._head != _avlIt._dummyNode &&_avlIt._head->_left){
-                // std::cout << "1)" << std::endl;
                 _avlIt._head = _avlIt.maxValNode(_avlIt._head->_left);
             }
             else if (_avlIt._head->_parent){
-                // std::cout << "2)" << std::endl;
-                // Node<value_type> *curr = _avlIt._head;
-                // while (curr->_parent
-                // && !_avlIt.key_comp(curr, curr->_parent))
-                //     curr = curr->_parent;
-                // if (curr->_parent
-                // && !_avlIt.key_comp(curr->_parent, _avlIt._head)){
-                //     _avlIt._head = curr->_parent;
-                // }
-                _avlIt._head = _avlIt._head->_parent;
+                Node<T> *curr = _avlIt._head;
+               while (curr->_parent
+                && value_compare()(curr->_pair, curr->_parent->_pair))
+                    curr = curr->_parent;
+                if (curr->_parent
+                && value_compare()(curr->_parent->_pair, _avlIt._head->_pair)){
+                    _avlIt._head = curr->_parent;
+                }
+                else 
+                    _avlIt._head = _avlIt._head->_parent;
             }
 			else{
-                // std::cout << "3)" << std::endl;
             	_avlIt._head = _avlIt._dummyNode;
             }
             return (*this);
@@ -99,18 +95,21 @@ namespace ft{
 			
 			// _ptr--
 	    const tree_iterator operator--(int){
-				tree_iterator tmp(*this);
-        operator++();
-        return (tmp);
-			} 
+			tree_iterator tmp(*this);
+            operator--();
+            return (tmp);
+		} 
 
-
+        bool operator==(tree_iterator &x){
+            return(this->_avlIt._head == x._avlIt._head);
+        }
+        bool operator!=(tree_iterator &x){
+            return(this->_avlIt._head != x._avlIt._head);
+        }
         protected:
-        AVL<value_type, kc> _avlIt;
+        AVL<T, value_compare> _avlIt;
 
     }; //end of class
-
-
 
 }; //end of namespace
 

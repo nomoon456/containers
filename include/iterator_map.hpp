@@ -6,14 +6,16 @@
 
 namespace ft{
 
-template <class value_type, class kc>
-class iterator_map : public tree_iterator<value_type, kc>{
+template <class T, class kc>
+class iterator_map : public tree_iterator<T, kc>{
 
 public:
-    typedef value_type* pointer;
-    typedef value_type& reference;
+    typedef T* pointer;
+    typedef T& reference;
+	typedef	typename tree_iterator<T, kc>::iterator_category		iterator_category;
+	typedef	typename tree_iterator<T, kc>::value_type			value_type;
 
-    iterator_map(): tree_iterator<value_type, kc>(){};
+    iterator_map(): tree_iterator<T, kc>(){};
 
     ~iterator_map(){
 			// this->_avlIt.freeDummyNode();
@@ -21,7 +23,7 @@ public:
     iterator_map(const iterator_map &src){
         *this = src;
     };
-    iterator_map(Node<value_type> *node){
+    iterator_map(Node<T> *node){
         this->_avlIt._head = node;
     }
     pointer operator->()const{
@@ -30,8 +32,8 @@ public:
     reference operator*()const{
         return (this->_avlIt._head->_pair);
     }
-	iterator_map	&operator++() { tree_iterator<value_type, kc>::operator++(); return *this; };
-	iterator_map	&operator--() { tree_iterator<value_type, kc>::operator--(); return *this; };
+	iterator_map	&operator++() { tree_iterator<T, kc>::operator++(); return *this; };
+	iterator_map	&operator--() { tree_iterator<T, kc>::operator--(); return *this; };
 	iterator_map	operator++(int) {
 		iterator_map tmp(*this);
 		operator++();

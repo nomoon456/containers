@@ -13,12 +13,12 @@ class AVL{
 public:
     typedef typename T::first_type ftype;
     typedef typename T::second_type stype;
-    
+    typedef typename A::template rebind<T>::other _pair_alloc;
 
     AVL():
     _head(NULL), 
-    _size(0),
-    _capacity(0){};
+    _size(0){
+    };
 
     AVL(const AVL &ref){
         *this = ref;
@@ -27,8 +27,8 @@ public:
         _head = ref._head;
         _dummyNode = ref._dummyNode;
         _alloc = ref._alloc;
+        _key_compare = ref._key_compare;
         _size = ref._size;
-        _capacity = ref._capacity;
         return (*this);
     }
     ~AVL(){
@@ -141,17 +141,15 @@ public:
             _size++;
              return (newNode(pair));
         }
-        if (pair.first < node->_pair.first){
+        if (_key_compare(pair.first, node->_pair.first)){
             Node<T> *lchild = insert(node->_left, pair);
             node->_left = lchild;
             lchild->_parent  = node;
-            // node->_left = insert(node->_left, pair);
         }
-        else if (pair.first > node->_pair.first){
+        else if (_key_compare(node->_pair.first, pair.first)){
             Node<T> *rchild = insert(node->_right, pair);
             node->_right = rchild;
             rchild->_parent  = node;
-            // node->_right = insert(node->_right, pair);
         }
         else 
             return (node);
@@ -159,18 +157,18 @@ public:
         int balance = getBalance(node);
 
         // left left
-        if (balance > 1 && pair.first < node->_left->_pair.first)
+        if (balance > 1 && _key_compare(pair.first, node->_pair.first))
             return (rightRotate(node));
         //right right
-        if (balance < -1 && pair.first > node->_right->_pair.first)
+        if (balance < -1 && _key_compare(node->_pair.first, pair.first))
             return (leftRotate(node));
         // left right
-        if (balance > 1 && pair.first > node->_left->_pair.first){
+        if (balance > 1 && _key_compare(node->_pair.first, pair.first)){
             node->_left = leftRotate(node->_left);
             return (rightRotate(node));
         }
         // right left
-        if (balance < -1 && pair.first < node->_right->_pair.first){
+        if (balance < -1 && _key_compare(pair.first, node->_pair.first)){
             node->_right = rightRotate(node->_right);
             return (leftRotate(node));
         }
@@ -178,9 +176,8 @@ public:
     }
 
     Node<T> *minValNode(Node<T> *node)const{
-        Node<T> *curr = node;
-
-        while(curr->_left != NULL && curr->_left != _dummyNode)
+        Node<T> *curr = node;        
+        while(curr->_left && curr->_left != _dummyNode)
             curr = curr->_left;
         return (curr);
     }
@@ -193,26 +190,24 @@ public:
         return (curr);
     }
 
+    
+
     Node<T> *deleteNode(Node<T> *node, ftype first){
         if (node == NULL)
             return (node);
-        if (first < node->_pair.first){
+        if (_key_compare(first, node->_pair.first)){
             node->_left = deleteNode(node->_left, first);
         }
-        else if (first > node->_pair.first){
+        else if (_key_compare(node->_pair.first, first)){
             node->_right = deleteNode(node->_right, first);
         }
         else {
-                // std::cout << "node parent: " << node->_parent->_pair.first << std::endl;
-                // std::cout << "node parent left: " << node->_parent->_left->_pair.first << std::endl; 
-                // std::cout << "node parent right: " << node->_parent->_right->_pair.first << std::endl; 
             if (!node->_left || !node->_right){
                 Node<T> *tmp = node->_left ? node->_left : node->_right;
                 /*
                  0 child  
                 */
                 if (!tmp){
-                // std::cout << "0 child" << std::endl;
                     tmp = node;
                     node = NULL;
                 }
@@ -220,31 +215,17 @@ public:
                  1 child  
                 */
                 else{
-                // std::cout << "1 child" << std::endl;
-                // std::cout << "node parent: " << node->_parent->_pair.first << std::endl;
-                // std::cout << "node parent left: " << node->_parent->_left->_pair.first << std::endl; 
-                // std::cout << "node parent right: " << node->_parent->_right->_pair.first << std::endl; 
-
-                // std::cout << "node: " << node->_pair.first << std::endl;
-                // std::cout << "tmp: " << tmp->_pair.first << std::endl;
-
-
                     tmp->_parent = node->_parent;
                     if (node->_parent && node->_parent->_left == node){
-                        // node->_parent->_right = tmp ? tmp : node->_parent->_left = tmp;
                         tmp->_parent->_left = tmp;
                     }
                     else if (node->_parent && node->_parent->_right == node){
                         tmp->_parent->_right = tmp;
                     }
-                // std::cout << "node parent: " << node->_parent->_pair.first << std::endl;
-                // std::cout << "node parent left: " << node->_parent->_left->_pair.first << std::endl; 
-                // std::cout << "node parent right: " << node->_parent->_right->_pair.first << std::endl; 
                     _alloc.destroy(node);
                     _alloc.deallocate(node,1);
                     --_size;
                     return (tmp);
-                    // *node = *tmp;
                 }
                 --_size;
                 _alloc.destroy(tmp);
@@ -254,20 +235,8 @@ public:
                  2 child  
                 */
             else {
-                // std::cout << "2 child" << std::endl;
-                Node<T> *tmp (minValNode(node->_right));
-			    tmp->_parent = node->_parent;
-			    tmp->_left = node->_left;
-			    if (node->_right != NULL && node->_right->_pair.first != tmp->_pair.first){
-			    	node->_right->_left = NULL;
-			    	tmp->_right = node->_right;
-			    }
-			    _alloc.construct(node, *tmp);
-			    if (node->_right != NULL)
-			    	node->_right->_parent = node;
-			    _alloc.destroy(tmp);
-			    _alloc.deallocate(tmp, 1);
-                    --_size;
+                _pair_alloc().destroy(&node->_pair);
+                _pair_alloc().construct(&node->_pair, minValNode(node->_right)->_pair);
                 node->_right = deleteNode(node->_right, node->_pair.first);
             }
         }
@@ -320,7 +289,7 @@ public:
     A _alloc;
     kc _key_compare;
     size_t _size;
-    size_t _capacity;
+    // size_t _capacity;
 };
 
 // Node of AVL Tree
@@ -351,7 +320,6 @@ public:
         _left = ref._left;
         _right = ref._right;
         _height = ref._height;
-				// _pair = ref._pair;
         return (*this);
     }
     ~Node(){};
